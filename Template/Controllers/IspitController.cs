@@ -48,11 +48,11 @@ namespace Template.Controllers
         }
    
 
-        [Route("PrijemPodataka/{duzina}/{sirina}/{idBrenda}/{idTipa}/{idProd}")]
+        [Route("PrijemPodataka/{nizacena}/{visacena}/{idBrenda}/{idTipa}/{idProd}")]
         [HttpGet]
-        public async Task<List<Proizvod>> PrijemPodataka(float duzina, float sirina, int idBrenda, int idTipa,int idProd)
+        public async Task<List<Proizvod>> PrijemPodataka(float nizacena, float visacena, int idBrenda, int idTipa,int idProd)
         {
-          var nadjeniPodaci = await Context.Proizvod.Where(p=>p.Prodavnica.ID==idProd && p.Brend.ID==idBrenda && p.Tip.ID==idTipa  && p.cena>=duzina  && p.cena<=sirina).ToListAsync(); ///moras tamo gde je await da imas i async
+          var nadjeniPodaci = await Context.Proizvod.Where(p=>p.Prodavnica.ID==idProd && p.Brend.ID==idBrenda && p.Tip.ID==idTipa  && p.cena>=nizacena  && p.cena<=visacena).ToListAsync(); ///moras tamo gde je await da imas i async
           if (nadjeniPodaci!=null){
                        
               return nadjeniPodaci;
