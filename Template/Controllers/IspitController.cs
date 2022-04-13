@@ -65,10 +65,13 @@ namespace Template.Controllers
         [Route("KupovinaKonfiguracije/{nizIzabranihProizvoda}/{idProdavnice}")]
         [HttpPut]
         public async Task<ActionResult> KupovinaKonfiguracije(string nizIzabranihProizvoda, int idProdavnice)
-        {
-         
-          var NadjenProizvod=await Context.Proizvod.Where(p=>nizIzabranihProizvoda.Contains((p.ID).ToString()) && p.Prodavnica.ID==idProdavnice).ToListAsync();
-          foreach(Proizvod Element in NadjenProizvod)
+        {///radi preko contains posto je to jedini nacin da pretrazujes da li je neki manji string u vecem stringu!
+        //niz izabranih proizvoda sastoji se od id-eva elemenata i slova a koje ih razdvaja.
+
+          while ( nizIzabranihProizvoda.IndexOf("a")!=-1){
+            var NadjeniProizvod=await Context.Proizvod.Where(p=>nizIzabranihProizvoda.Contains((p.ID).ToString()) && p.Prodavnica.ID==idProdavnice).ToListAsync();
+          
+            foreach(Proizvod Element in NadjeniProizvod)
                { 
                 Element.kolicina--;
                 if (Element.kolicina<=0)
@@ -77,14 +80,19 @@ namespace Template.Controllers
                     Context.Proizvod.Update(Element);
                 }
                }
+              int loc=nizIzabranihProizvoda.IndexOf("a");
+              nizIzabranihProizvoda=nizIzabranihProizvoda.Remove(0, loc+1); //izbacuje deo stringa izmedju dva slova a
+            }
           await Context.SaveChangesAsync();
-          return Ok("uspesno izmenjena vrednosttt");
+          return Ok("uspesno pretrazeni proizvodi");
         }
     }
 }
+
+
 //
 
-/*Jedino sto smo dodali u ovom obrascu je ,
+/*Jedino sto smo dodali u ovom Template-u je ,
   "ConnectionStrings": {
     "IspitCS": "Server=(localdb)\\MSSQLLocalDB;Database=TestBazaPodataka"   
   },
