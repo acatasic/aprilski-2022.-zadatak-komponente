@@ -6,8 +6,7 @@ export class Prodavnica {
         this.id = id;
         this.naziv = naziv;
         this.kontejner = null;
-        this.sare = [];
-        this.ploce=[];
+        this.nizIdIzabranihProizvoda="";//definicija stringa jer ne Saljes Niz kroz fetch
     }
 
     crtajPK(host) {
@@ -84,7 +83,7 @@ export class Prodavnica {
         kontForma1.appendChild(elLabela);
 
         var inputDuzina = document.createElement("input");
-        inputDuzina.className = "duzina";
+        inputDuzina.className = "cena";
         kontForma1.appendChild(inputDuzina);
 
         var elLabelaSirina = document.createElement("label");
@@ -107,36 +106,33 @@ export class Prodavnica {
         kontForma2ZaBrisanje.className = "kontForma2KojiMozeDaSeBrise";
         kontForma2.appendChild(kontForma2ZaBrisanje);
 
-
         dugme.onclick = (ev) => {
-            var duzina = parseInt(this.kontejner.querySelector(".duzina").value);
+            var cena = parseInt(this.kontejner.querySelector(".cena").value);
             var sirina = parseInt(this.kontejner.querySelector(".sirina").value);
            
-
             var idBrenda = this.kontejner.querySelector('select[name="selectBrend"]').value;
             var idTipa = this.kontejner.querySelector('select[name="selecttip"]').value;
          
-            fetch("https://localhost:5001/Ispit/PrijemPodataka/" + duzina + "/" + sirina + "/" + idBrenda + "/" + idTipa + "/"+ this.id , {
+            fetch("https://localhost:5001/Ispit/PrijemPodataka/" + cena + "/" + sirina + "/" + idBrenda + "/" + idTipa + "/"+ this.id , {
             method: "GET",
             headers: 
             {
                     "Content-Type": "application/json"
             },
             }).then(p => {
-                p.json().then(data => {
+                p.json().then( data => {
 
-                    
                     var pronadjiDivZaBrisanje=document.querySelector(".kontForma2KojiMozeDaSeBrise");
                     console.log(pronadjiDivZaBrisanje);
                     if (pronadjiDivZaBrisanje!=null){///obrati paznju, bez te provere ne radi
                         (pronadjiDivZaBrisanje.parentNode).removeChild(pronadjiDivZaBrisanje);
                     }
-
+                    
                     const kontForma2ZaBrisanje = document.createElement("div");
                     kontForma2ZaBrisanje.className = "kontForma2KojiMozeDaSeBrise";
                     kontForma2.appendChild(kontForma2ZaBrisanje); //ovo se ponavlja zato sto se obrise div
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///tabela
+///tabela se pravi lako , pravis redove i onda ih dodajes u table body, a naravno nazive kolona dodajes u thead
                     let table = document.createElement('table');
                     table.className="table";
                    
@@ -150,12 +146,18 @@ export class Prodavnica {
                     heading_2.innerHTML = "naziv";
                     let heading_3 = document.createElement('th');
                     heading_3.innerHTML = "cena";
+                    let heading_4 = document.createElement('th');
+                    heading_4.innerHTML = "količina";
 
                     row_1.appendChild(heading_1);
                     row_1.appendChild(heading_2);
                     row_1.appendChild(heading_3);
+                    row_1.appendChild(heading_4)
                     thead.appendChild(row_1);
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    var dugmeKupi=document.createElement("button");
+                    dugmeKupi.innerHTML="Kupi konfiguraciju"
+                    kontForma2.appendChild(dugmeKupi);
 
                     data.forEach((dataa) => {
 
@@ -189,41 +191,74 @@ export class Prodavnica {
 
                         kontForma2ZaBrisanje.appendChild(opcijaDiv);
 
-                       
-
                         dugme1.onclick = (ev)=>{////dugme koje sluzi za dodavanje elemenata u tabelu konfiguracija
 
+                            this.nizIdIzabranihProizvoda=this.nizIdIzabranihProizvoda.concat(dataa.id,"a");
+
+                            var nadjenaKolicina=this.kontejner.querySelector(".vrednostKolicine"+dataa.id);////nalazenje da li postoji polje sa istim id-em
+                            //ono sto sam primetio je da className ne moze biti samo brojcana vrednost
                             
-                            let row_2 = document.createElement('tr');
-                            let tableData1 = document.createElement('td');
-                            tableData1.innerHTML = dataa.sifra ;
+                            if (nadjenaKolicina==undefined){
+                                
+                                let row_2 = document.createElement('tr');
+                                row_2.className="red"+dataa.id;
 
-                            let tableData2 = document.createElement('td');
-                            tableData2.innerHTML = dataa.naziv ;
+                                let tableData1 = document.createElement('td');
+                                tableData1.innerHTML = dataa.sifra ;
 
-                            let tableData3 = document.createElement('td');
-                            tableData3.innerHTML = dataa.cena ;
+                                let tableData2 = document.createElement('td');
+                                tableData2.value=dataa.naziv;
+                                tableData2.innerHTML = dataa.naziv ;
 
-                            row_2.appendChild(tableData1);
-                            row_2.appendChild(tableData2);
-                            row_2.appendChild(tableData3);
-                            tbody.appendChild(row_2);
+                                let tableData3 = document.createElement('td');
+                                tableData3.innerHTML = dataa.cena ;
 
-                            table.appendChild(thead);
-                            table.appendChild(tbody);
-                            kontForma2ZaBrisanje.appendChild(table);
+                                let tableData4 = document.createElement('td');
+                                tableData4.innerHTML=1 ;
+                                tableData4.value=1;
+                                tableData4.className="vrednostKolicine"+dataa.id;
 
-                            
+                                row_2.appendChild(tableData1);
+                                row_2.appendChild(tableData2);
+                                row_2.appendChild(tableData3);
+                                row_2.appendChild(tableData4);
+                                tbody.appendChild(row_2);
+
+                                table.appendChild(thead);
+                                table.appendChild(tbody);
+                                kontForma2ZaBrisanje.appendChild(table);
+                            }
+                            else
+                            {
+                                nadjenaKolicina.innerHTML=nadjenaKolicina.value+1;
+                                nadjenaKolicina.value++; //////////////ovde je potrebno podesiti da kad se dodaje isti proizvod, mora da se nadje
+                                //taj red u kom je kolicina tog proizvoda (to se radi preko value i preko className-a koje ima to polje u tabelici)
+
+                            }
                         }
-
-
                     })
+                    dugmeKupi.onclick = (ev) => {
+
+                       ///salje se string id-eva proizvoda koji se onda pretrazuje na Backendu
+                    fetch("https://localhost:5001/Ispit/KupovinaKonfiguracije/" + this.nizIdIzabranihProizvoda + "/" + this.id,
+                        {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                        }).then(p => {
+                            if (p.ok) {
+                                alert("Uspesna kupovina");
+                                document.location.reload();
+                            }
+                            else{
+                                alert("Neuspesna kupovina");
+                            }
+                        })
+
+                    }  
                 })
             })
-            
-       
         }
-////kako pronaci dugme koje je pretisnuto to moram resiti!!!!!!!!!!!!!!!!!!!!
-      
     }
 }

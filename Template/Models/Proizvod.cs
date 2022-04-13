@@ -18,6 +18,9 @@ namespace Template.Models
         [Column("Naziv")]
         public string naziv{get;set;}
 
+        [Column("Kolicina")]
+        public int kolicina{get;set;}
+
         [Column("Cena")]
         public int cena{get;set;}
         public virtual Prodavnica Prodavnica {get;set;}

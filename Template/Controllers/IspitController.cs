@@ -62,6 +62,24 @@ namespace Template.Controllers
             return nadjeniPodaci=null;
           }
         }
+        [Route("KupovinaKonfiguracije/{nizIzabranihProizvoda}/{idProdavnice}")]
+        [HttpPut]
+        public async Task<ActionResult> KupovinaKonfiguracije(string nizIzabranihProizvoda, int idProdavnice)
+        {
+         
+          var NadjenProizvod=await Context.Proizvod.Where(p=>nizIzabranihProizvoda.Contains((p.ID).ToString()) && p.Prodavnica.ID==idProdavnice).ToListAsync();
+          foreach(Proizvod Element in NadjenProizvod)
+               { 
+                Element.kolicina--;
+                if (Element.kolicina<=0)
+                    Context.Proizvod.Remove(Element);
+                else{
+                    Context.Proizvod.Update(Element);
+                }
+               }
+          await Context.SaveChangesAsync();
+          return Ok("uspesno izmenjena vrednosttt");
+        }
     }
 }
 //
