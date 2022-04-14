@@ -68,7 +68,7 @@ namespace Template.Controllers
         {///radi preko contains posto je to jedini nacin da pretrazujes da li je neki manji string u vecem stringu!
         //niz izabranih proizvoda sastoji se od id-eva elemenata i slova a koje ih razdvaja.
 
-          while ( nizIzabranihProizvoda.IndexOf("a")!=-1){
+          while ( nizIzabranihProizvoda.IndexOf("a")!=-1){//-1 je vrednost ako ne nadje string a u nizuIzabranihProizvoda
             var NadjeniProizvod=await Context.Proizvod.Where(p=>nizIzabranihProizvoda.Contains((p.ID).ToString()) && p.Prodavnica.ID==idProdavnice).ToListAsync();
           
             foreach(Proizvod Element in NadjeniProizvod)
