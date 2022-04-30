@@ -50,7 +50,7 @@ namespace Template.Controllers
 
         [Route("PrijemPodataka/{nizacena}/{visacena}/{idBrenda}/{idTipa}/{idProd}")]
         [HttpGet]
-        public async Task<List<Proizvod>> PrijemPodataka(float nizacena, float visacena, int idBrenda, int idTipa,int idProd)
+        public async Task<List<Proizvod>> PrijemPodataka(int nizacena, int visacena, int idBrenda, int idTipa,int idProd)
         {
           var nadjeniPodaci = await Context.Proizvod.Where(p=>p.Prodavnica.ID==idProd && p.Brend.ID==idBrenda && p.Tip.ID==idTipa  && p.cena>=nizacena  && p.cena<=visacena).ToListAsync(); ///moras tamo gde je await da imas i async
           if (nadjeniPodaci!=null){
@@ -85,6 +85,30 @@ namespace Template.Controllers
             }
           await Context.SaveChangesAsync();
           return Ok("uspesno pretrazeni proizvodi");
+          
+          /*
+          do{
+          var Element=await Context.Proizvod.Where(p=>nizIzabranihProizvoda.Contains((p.ID).ToString()) && p.Prodavnica.ID==idProdavnice).FirstAsync();
+        
+            //foreach(Proizvod Element in NadjeniProizvodi)
+               
+                Element.kolicina--;
+                if (Element.kolicina==0){
+                    Context.Proizvod.Remove(Element);}
+                    else if (Element.kolicina==-1){
+                    return BadRequest("Nema dovoljno proizvoda za realizovanje kupovine");}
+                  else{
+                    Context.Proizvod.Update(Element);
+                }
+               
+              int loc=nizIzabranihProizvoda.IndexOf("a");
+              nizIzabranihProizvoda=nizIzabranihProizvoda.Remove(0, loc+1); //izbacuje deo stringa izmedju dva slova a
+          }
+          while ( nizIzabranihProizvoda.IndexOf("a")!=-1);
+
+          await Context.SaveChangesAsync();//////context se tek zapamti na kraju tako da mozes raditi sta god hoces, neces obrisati polovinu elemenata a polovinu ne npr
+          return Ok("uspesno pretrazeni proizvodi");
+        */ //izmena sa while do petljom mada mislim da radi i bez toga(ove sitne izmene nisi odstampao
         }
     }
 }
