@@ -108,7 +108,7 @@ namespace Template.Controllers
 
           await Context.SaveChangesAsync();//////context se tek zapamti na kraju tako da mozes raditi sta god hoces, neces obrisati polovinu elemenata a polovinu ne npr
           return Ok("uspesno pretrazeni proizvodi");
-        */ //izmena sa while do petljom mada mislim da radi i bez toga(ove sitne izmene nisi odstampao
+        */ //izmena sa while do petljom , mislim da je problem u ovom pretrazivanju stringa(ove sitne izmene nisi odstampao
         }
     }
 }
