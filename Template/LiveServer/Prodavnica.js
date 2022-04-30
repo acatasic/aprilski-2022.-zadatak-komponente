@@ -107,6 +107,7 @@ export class Prodavnica {
         kontForma2.appendChild(kontForma2ZaBrisanje);
 
         dugme.onclick = (ev) => {
+           this.nizIdIzabranihProizvoda="";//dodato da se ne prepuni taj niz
             var cena = parseInt(this.kontejner.querySelector(".cena").value);
             var sirina = parseInt(this.kontejner.querySelector(".sirina").value);
            
